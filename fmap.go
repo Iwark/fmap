@@ -1,22 +1,21 @@
-package paramstostruct
+package fmap
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
 )
 
-// Convert converts req.Form to the structure which has the json tags
-func Convert(m map[string][]string, s interface{}) error {
+// ConvertToStruct converts req.Form to the struct which has the json tags
+func ConvertToStruct(m map[string][]string, s interface{}) error {
 
 	tagInfo := make(map[string]string)
 	rt := reflect.TypeOf(s).Elem()
 	for i := 0; i < rt.NumField(); i++ {
-		if json := rt.Field(i).Tag.Get("json"); json != "" && json != "-" {
+		if val := rt.Field(i).Tag.Get("fmap"); val != "" {
 			sName := strings.ToLower(rt.Name())
-			key := fmt.Sprintf("%s[%s]", sName, json)
+			key := fmt.Sprintf("%s[%s]", sName, val)
 			tagInfo[key] = rt.Field(i).Name
 		}
 	}
@@ -59,7 +58,7 @@ func setField(obj interface{}, name string, value interface{}) error {
 	case "string":
 		rv.Set(val)
 	default:
-		return errors.New(fmt.Sprintf("Provided value type didn't match obj field type val_type: %v, rv_type: %v", val.Type(), rv.Type()))
+		return fmt.Errorf("Provided value type didn't match obj field type val_type: %v, rv_type: %v", val.Type(), rv.Type())
 	}
 
 	return nil

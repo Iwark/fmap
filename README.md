@@ -1,13 +1,13 @@
-paramstostruct
+fmap
 ===
-[![GoDoc](https://godoc.org/github.com/Iwark/paramstostruct?status.svg)](https://godoc.org/github.com/Iwark/paramstostruct)
+[![GoDoc](https://godoc.org/github.com/Iwark/fmap?status.svg)](https://godoc.org/github.com/Iwark/fmap)
 
-Package ``paramstostruct`` convert a map to a struct.
+Package ``fmap`` converts ``req.Form()`` to a struct.
 
 ## Installation
 
 ```
-$ go get github.com/Iwark/paramstostruct
+$ go get github.com/Iwark/fmap
 ```
 
 ## Example
@@ -17,13 +17,13 @@ package main
 
 import (
   "fmt"
-  "github.com/Iwark/paramstostruct"
+  "github.com/Iwark/fmap"
 )
 
 type Person struct {
-  Name   string `json:"-"`
-  Age    int    `json:"age"`
-  Gender string `json:"gender"`
+  Name   string `fmap:"-"`
+  Age    int    `fmap:"age"`
+  Gender string `fmap:"gender"`
 }
 
 func httpHandler(res http.ResponseWriter, req *http.Request) {
@@ -38,7 +38,7 @@ func httpHandler(res http.ResponseWriter, req *http.Request) {
   // }
 
   result := &Person{}
-  err := paramstostruct.Convert(formValue, result)
+  err := fmap.ConvertToStruct(formValue, result)
   if err != nil {
       fmt.Println(err)
   }
@@ -48,4 +48,4 @@ func httpHandler(res http.ResponseWriter, req *http.Request) {
 
 ## License
 
-paramstostruct is released under the MIT License.
+fmap is released under the MIT License.
