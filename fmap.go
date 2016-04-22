@@ -3,6 +3,7 @@ package fmap
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"reflect"
 	"strconv"
 	"time"
@@ -32,7 +33,7 @@ var timeFormats = []string{
 // var Case = SnakeCase
 
 // ConvertToStruct converts req.Form to the struct which has the json tags
-func ConvertToStruct(m map[string][]string, s interface{}) error {
+func ConvertToStruct(m url.Values, s interface{}) error {
 
 	tagInfo := make(map[string]string)
 	rt := reflect.TypeOf(s).Elem()
@@ -49,13 +50,13 @@ func ConvertToStruct(m map[string][]string, s interface{}) error {
 		}
 		tagInfo[key] = rt.Field(i).Name
 	}
-	for k, v := range m {
+	for k := range m {
 		var err error
 		// If the struct has the key, set value
 		if name, ok := tagInfo[k]; ok {
-			err = setField(s, name, v[0])
+			err = setField(s, name, m.Get(k))
 		} else {
-			err = setField(s, k, v[0])
+			err = setField(s, k, m.Get(k))
 		}
 		if err != nil {
 			return err
