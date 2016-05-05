@@ -84,6 +84,36 @@ func setField(obj interface{}, name string, value interface{}) error {
 			return err
 		}
 		rv.Set(reflect.ValueOf(intVal))
+	case reflect.TypeOf(int32(0)):
+		intVal, err := strconv.Atoi(val.Interface().(string))
+		if err != nil {
+			return err
+		}
+		rv.Set(reflect.ValueOf(int32(intVal)))
+	case reflect.TypeOf(int64(0)):
+		intVal, err := strconv.Atoi(val.Interface().(string))
+		if err != nil {
+			return err
+		}
+		rv.Set(reflect.ValueOf(int64(intVal)))
+	case reflect.TypeOf(uint(0)):
+		intVal, err := strconv.Atoi(val.Interface().(string))
+		if err != nil {
+			return err
+		}
+		rv.Set(reflect.ValueOf(uint(intVal)))
+	case reflect.TypeOf(uint32(0)):
+		intVal, err := strconv.Atoi(val.Interface().(string))
+		if err != nil {
+			return err
+		}
+		rv.Set(reflect.ValueOf(uint32(intVal)))
+	case reflect.TypeOf(uint64(0)):
+		intVal, err := strconv.Atoi(val.Interface().(string))
+		if err != nil {
+			return err
+		}
+		rv.Set(reflect.ValueOf(uint64(intVal)))
 	case reflect.TypeOf(""):
 		rv.Set(val)
 	case reflect.TypeOf(time.Time{}):
