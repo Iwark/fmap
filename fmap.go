@@ -32,6 +32,12 @@ var timeFormats = []string{
 // // Case represents the case of form names
 // var Case = SnakeCase
 
+// HasStructName is whether the form key has a struct name or not
+// when set to true, the input name should be like: user[name]
+// when set to false, the input name should be like: name
+// defaults to true
+var HasStructName = true
+
 // ConvertToStruct converts req.Form to the struct which has the json tags
 func ConvertToStruct(m url.Values, s interface{}) error {
 
@@ -44,9 +50,12 @@ func ConvertToStruct(m url.Values, s interface{}) error {
 			if val == "-" {
 				continue
 			}
-			key = fmt.Sprintf("%s[%s]", sName, val)
+			key = val
 		} else {
-			key = fmt.Sprintf("%s[%s]", sName, xstrings.ToSnakeCase(rt.Field(i).Name))
+			key = xstrings.ToSnakeCase(rt.Field(i).Name)
+		}
+		if HasStructName {
+			key = fmt.Sprintf("%s[%s]", sName, key)
 		}
 		tagInfo[key] = rt.Field(i).Name
 	}
