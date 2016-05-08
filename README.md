@@ -29,7 +29,7 @@ type Person struct {
 func httpHandler(res http.ResponseWriter, req *http.Request) {
   req.ParseForm()
 
-  formValue := req.Form()
+  formValue := req.Form
   // map[string][]string{
   //   "person[name]":   []string{"Iwark"},
   //   "person[age]":    []string{"24"},
