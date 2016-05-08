@@ -32,7 +32,7 @@ func TestConvert(t *testing.T) {
 	}
 
 	result := &Person{}
-	err := ConvertToStruct(formValue, result)
+	err := New().WithStructName().ConvertToStruct(formValue, result)
 	assert.NoError(err)
 	require.NotNil(t, result.DeletedAt)
 	deleted := result.DeletedAt.Format("2006-01-02")
@@ -45,8 +45,7 @@ func TestConvert(t *testing.T) {
 	birthday := result.Birthday.Format("2006-01-02")
 	assert.NotEqual("2016-05-18", birthday)
 
-	HasStructName = false
-	err = ConvertToStruct(formValue, result)
+	err = New().ConvertToStruct(formValue, result)
 	assert.NoError(err)
 
 	birthday = result.Birthday.Format("2006-01-02")

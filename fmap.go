@@ -1,7 +1,6 @@
 package fmap
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"reflect"
@@ -11,19 +10,6 @@ import (
 	"github.com/huandu/xstrings"
 )
 
-var timeFormats = []string{
-	"1/2/2006",
-	"1/2/2006 15:4:5",
-	"2006-1-2 15:4:5",
-	"2006-1-2 15:4",
-	"2006-1-2",
-	"1-2",
-	"15:4:5",
-	"15:4",
-	"15",
-	"15:4:5 Jan 2, 2006 MST",
-}
-
 // const (
 // 	// SnakeCase uses snake_case to convert
 // 	SnakeCase = iota
@@ -32,15 +18,27 @@ var timeFormats = []string{
 // // Case represents the case of form names
 // var Case = SnakeCase
 
-// HasStructName is whether the form key has a struct name or not
+// Converter converts the form values to the struct
+type Converter struct {
+	withStructName bool
+}
+
+// New creates a Converter
+func New() *Converter {
+	return &Converter{}
+}
+
+// WithStructName set whether the form key has a struct name or not
 // when set to true, the input name should be like: user[name]
 // when set to false, the input name should be like: name
 // defaults to true
-var HasStructName = true
+func (c *Converter) WithStructName() *Converter {
+	c.withStructName = true
+	return c
+}
 
 // ConvertToStruct converts req.Form to the struct which has the json tags
-func ConvertToStruct(m url.Values, s interface{}) error {
-
+func (c *Converter) ConvertToStruct(m url.Values, s interface{}) error {
 	tagInfo := make(map[string]string)
 	rt := reflect.TypeOf(s).Elem()
 	sName := xstrings.ToSnakeCase(rt.Name())
@@ -54,7 +52,7 @@ func ConvertToStruct(m url.Values, s interface{}) error {
 		} else {
 			key = xstrings.ToSnakeCase(rt.Field(i).Name)
 		}
-		if HasStructName {
+		if c.withStructName {
 			key = fmt.Sprintf("%s[%s]", sName, key)
 		}
 		tagInfo[key] = rt.Field(i).Name
@@ -72,7 +70,6 @@ func ConvertToStruct(m url.Values, s interface{}) error {
 		}
 	}
 	return nil
-
 }
 
 func setField(obj interface{}, name string, value interface{}) error {
@@ -142,21 +139,4 @@ func setField(obj interface{}, name string, value interface{}) error {
 	}
 
 	return nil
-}
-
-func parseTime(str string) (t time.Time, err error) {
-	for _, format := range timeFormats {
-		t, err = time.Parse(format, str)
-		if err == nil {
-			location := t.Location()
-			if location.String() == "UTC" {
-				location = time.Now().Location()
-			}
-			pt := []int{t.Second(), t.Minute(), t.Hour(), t.Day(), int(t.Month()), t.Year()}
-			t = time.Date(pt[5], time.Month(pt[4]), pt[3], pt[2], pt[1], pt[0], 0, location)
-			return
-		}
-	}
-	err = errors.New("Can't parse string as time: " + str)
-	return
 }

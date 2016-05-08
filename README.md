@@ -38,7 +38,7 @@ func httpHandler(res http.ResponseWriter, req *http.Request) {
   // }
 
   result := &Person{}
-  err := fmap.ConvertToStruct(formValue, result)
+  err := fmap.New().WithStructName().ConvertToStruct(formValue, result)
   if err != nil {
       fmt.Println(err)
   }
