@@ -15,6 +15,7 @@ type Person struct {
 	Age       int    `fmap:"great_age"`
 	Gender    string `fmap:"gender"`
 	Birthday  time.Time
+	Admin     bool
 }
 
 func TestConvert(t *testing.T) {
@@ -29,6 +30,7 @@ func TestConvert(t *testing.T) {
 		"person[hobby]":      []string{"playing the piano"},
 		"not_person":         []string{"hoge", "fuga"},
 		"birthday":           []string{"2016-05-18"},
+		"admin":              []string{"true"},
 	}
 
 	result := &Person{}
@@ -44,10 +46,12 @@ func TestConvert(t *testing.T) {
 	assert.Equal("man", result.Gender)
 	birthday := result.Birthday.Format("2006-01-02")
 	assert.NotEqual("2016-05-18", birthday)
+	assert.NotEqual(true, result.Admin)
 
 	err = New().ConvertToStruct(formValue, result)
 	assert.NoError(err)
 
 	birthday = result.Birthday.Format("2006-01-02")
 	assert.Equal("2016-05-18", birthday)
+	assert.Equal(true, result.Admin)
 }

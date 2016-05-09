@@ -134,6 +134,12 @@ func setField(obj interface{}, name string, value interface{}) error {
 			return err
 		}
 		rv.Set(reflect.ValueOf(&t))
+	case reflect.TypeOf(true):
+		if val.String() == "true" {
+			rv.SetBool(true)
+		} else {
+			rv.SetBool(false)
+		}
 	default:
 		return fmt.Errorf("Provided value type didn't match obj field type val_type: %v, rv_type: %v", val.Type(), rv.Type())
 	}
