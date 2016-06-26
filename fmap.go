@@ -60,10 +60,20 @@ func (c *Converter) ConvertToStruct(m url.Values, s interface{}) error {
 	for k := range m {
 		var err error
 		// If the struct has the key, set value
-		if name, ok := tagInfo[k]; ok {
-			err = setField(s, name, m.Get(k))
+		var mv interface{}
+		if len(m[k]) > 1 {
+			tmp := fmt.Sprintf("%v", m[k][0])
+			for i := 1; i < len(m[k]); i++ {
+				tmp += fmt.Sprintf(",%v", m[k][i])
+			}
+			mv = tmp
 		} else {
-			err = setField(s, k, m.Get(k))
+			mv = m.Get(k)
+		}
+		if name, ok := tagInfo[k]; ok {
+			err = setField(s, name, mv)
+		} else {
+			err = setField(s, k, mv)
 		}
 		if err != nil {
 			return err
@@ -81,7 +91,6 @@ func setField(obj interface{}, name string, value interface{}) error {
 	if !rv.CanSet() {
 		return fmt.Errorf("Cannot set %s field value", name)
 	}
-
 	val := reflect.ValueOf(value)
 	switch rv.Type() {
 	case reflect.TypeOf(int(0)):
